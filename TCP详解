@@ -65,11 +65,22 @@
          
   ◉通信双方通过内部状态保持彼此的信息，连接关系始终保持，并通过报文交换来进行连接状态变更。
     除了确认报文本身不被确认外，其他报文都有ACK进行确认，报文有可能超时需要重传。
+    
+    
+    四次挥手：
+    
+    Client  ----Fin---->  Server
+    
+    
+    Client  <----ACK----  Server
   
   
+    Client  <----Fin----  Server 
+    (启动一个2msl定时器，防止最后一个ACK丢失。
+     如果在2msl没有收到Server的再次FIN，说明已经成功断链。
+     如果在2msl内收到Server的再FIN，需要再次ACK)
     
-    
-    
+    Client  ----ACK---->  Server
     
     
     

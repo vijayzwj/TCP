@@ -1,0 +1,56 @@
+GET 方法是从指定的资源请求数据GET 
+       请求可被缓存GET 
+       请求保留在浏览器历史记录中GET 
+       请求可被收藏为书签GET 
+       请求不应在处理敏感数据时使用GET 
+       请求有长度限制
+       GET 请求只应当用于取回数据
+
+POST 方法向指定资源提交要被处理的数据POST 
+     请求不会被缓存POST 
+     请求不会保留在浏览器历史记录中POST 
+     不能被收藏为书签POST 
+     请求对数据长度没有要求
+
+
+缓存头：
+
+     Cache-Control 与 ExpiresCache-Control 与 Expires 作用一致，都是指当前资源的有效期，
+
+     控制浏览器是否直接从浏览器获取数据还是重新发送请求到服务器取数据。
+     
+     Cache-Control 的选择更多，设置更细致，如果同时存在的话，优先级高于 Expires。
+     
+Last-Modified/ETag 与 Cache-Control/Expires
+            配置 Last-Modified/ETag 的情况下，浏览器再次访问统一 URI 的资源，还是会发送请求到服务器询问文件是否已经修改，
+            如果没有，服务器会只返回影响吗 304 （图第二张图所示）回给浏览器，代表资源没有变化，告诉浏览器直接读取缓存数据
+
+Cache-Control/Expires 不同，如果检测到本地的缓存还是有效的时间范围内，浏览器直接使用本地副本，不会发送任何请求。
+        两者一起使用时，Cache-Control/Expires的优先级要高于Last-Modified/ETag。
+        即当本地副本根据Cache-Control/Expires发现还在有效期内时，则不会再次发送请求去服务器询问修改时间（Last-Modified）或实体标识（Etag）了。
+        
+一般情况下，使用 Cache-Control/Expires 会配合 Last-Modified/ETag 一起使用，因为即使服务器设置缓存时间, 
+当用户点击“刷新”按钮时，浏览器会忽略缓存继续向服务器发送请求，这时 Last-Modified/ETag 将能够很好利用 304 ，从而减少响应开销。
+
+既然已经有了 Last-Modified 已经能够知道本地缓存是否是最新的了，为什么还需要 Etag 呢？
+
+主要是基于以下几个原因：
+       Last-Modified 标注的最后修改时间只能精确到秒，如果有些资源在一秒之内被多次修改的话，他就不能准确标注文件的新鲜度了如果某些资源会被定期生成，
+       当内容没有变化，但 Last-Modified 却改变了，导致文件没使用缓存有可能存在服务器没有准确获取资源修改时间，或者与代理服务器时间不一致的情形。
+       
+       Etag 是服务器自动生成或者由开发者生成的对应资源在服务器端的唯一标识符，能够更加准确的控制缓存。Last-Modified 与 ETag 是可以一起使用的，
+       服务器会优先验证 ETag，一致的情况下，才会继续比对 Last-Modified，最后才决定是否返回304。
+       
+不能被缓存的请求
+    HTTP 信息头中包含Cache-Control:no-cache，pragma:no-cache，
+
+    或Cache-Control:max-age=0 等告诉浏览器不用缓存的请求需要根据Cookie，
+    
+    认证信息等决定输入内容的动态请求是不能被缓存的经过HTTPS安全加密的请求
+    
+    （有人也经过测试发现，ie 其实在头部加入 Cache-Control：max-age 信息，firefox 在头部加入 Cache-Control:Public 之后，
+    
+    能够对HTTPS的资源进行缓存）HTTP 响应头中不包含 Last-Modified/Etag，也不包含 Cache-Control/Expires 的请求无法被缓存
+
+
+

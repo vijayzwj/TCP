@@ -1,0 +1,7 @@
+1 sudo tcpdump -X -i eth0 -vvvv  -n port 8080 and  host 172.22.221.167 and  172.22.201.79 -w /tmp/my.cap
+
+
+   sudo tcpdump -X -i eth0 -vvvv  -n port 8080（端口） and  host 172.22.221.167（源） and  172.22.201.79（目标） -w /tmp/my.cap
+  
+  
+2  将/tmp/my.cap导入wireshark进行分析
